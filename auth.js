@@ -5,8 +5,9 @@ export async function getToken() {
     let token = await tokenModel.findOne();
     // there should always be token present in a DB
     if (!token) {
-        throw Error("Token not found in DB!")
-        //token = await tokenModel.create({ jwt: "eYJdasfagasd", refreshToken: "dasfasfafasf" })
+        // this can only be initialized manually unfortunatelly
+        token = await tokenModel.create({ jwt: "eYJyourjsonwebtoken", refreshToken: "refreshtoken" })
+        throw Error("Update token in your Database!")
     }
     const diff = new Date().getTime() - new Date(token.updatedAt).getTime()
     // every 3 minutes refresh token just in case

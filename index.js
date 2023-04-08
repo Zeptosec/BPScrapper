@@ -10,8 +10,14 @@ const app = express();
 
 app.use(validatePassPhrase);
 
-app.get(`/getprice`, async (req, res) => {
-    const prices = await getPrices();
+app.get(`/getprices`, async (req, res) => {
+    let prices = null;
+    try {
+        prices = await getPrices();
+    } catch (err) {
+        console.log(err);
+    }
+    
     if (prices) {
         res.status(200).json(prices);
     } else {
@@ -20,8 +26,14 @@ app.get(`/getprice`, async (req, res) => {
 })
 
 app.get(`/collect`, async (req, res) => {
-    const prices = await getPrices();
-    if(prices){
+    let prices = null;
+    try {
+        prices = await getPrices();
+    } catch (err) {
+        console.log(err);
+    }
+
+    if (prices) {
         res.status(200).setHeader("Success", "saved");
     } else {
         res.status(500).setHeader("Failed", "failed to save");

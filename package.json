@@ -1,11 +1,11 @@
 {
   "name": "bpscrapper",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "does what is says in the title",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
