@@ -11,13 +11,14 @@ const app = express();
 app.use(validatePassPhrase);
 
 app.get(`/getprices`, async (req, res) => {
+    
     let prices = null;
     try {
         prices = await getPrices();
     } catch (err) {
         console.log(err);
     }
-    
+
     if (prices) {
         res.status(200).json(prices);
     } else {

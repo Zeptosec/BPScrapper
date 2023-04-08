@@ -28,7 +28,7 @@ export function validatePassPhrase(req, res, next) {
     const passPhrase = process.env.PASSPHRASE;
     const passQuery = req.query.pass;
     if (!passQuery)
-        return res.status(401).setHeader("Failed", "missing param pass");
+        return res.status(401).setHeader("Failed", "missing param pass").send();
     if (passQuery !== passPhrase)
         return res.status(401).setHeader("Failed", "wrong pass").send();
     next();
