@@ -35,9 +35,9 @@ app.get(`/collect`, async (req, res) => {
     }
 
     if (prices) {
-        res.status(200).setHeader("Success", "saved");
+        res.status(200).setHeader("Success", "saved").send();
     } else {
-        res.status(500).setHeader("Failed", "failed to save");
+        res.status(500).setHeader("Failed", "failed to save").send();
     }
 })
 
