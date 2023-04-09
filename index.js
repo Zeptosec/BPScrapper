@@ -11,7 +11,7 @@ const app = express();
 app.use(validatePassPhrase);
 
 app.get(`/getprices`, async (req, res) => {
-    
+
     let prices = null;
     try {
         prices = await getPrices();
