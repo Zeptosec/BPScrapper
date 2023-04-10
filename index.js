@@ -10,8 +10,10 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use("/api", prices);
 app.get('/', async (req, res) => {
+    const { formattedPrices, station } = await getStatistics(7);
     res.render(`index`, {
-        prices: await getStatistics(7)
+        prices: formattedPrices,
+        station
     })
 })
 

@@ -13,9 +13,12 @@
         body {
             background-color: #232323;
         }
-        h2, h3 {
+
+        h2,
+        h3 {
             color: white;
         }
+
         main {
             max-width: 1100px;
             padding: 0 4px;
@@ -36,14 +39,15 @@
         src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script>
         function getFormattedDate(datetime) {
-            const date = new Date(datetime).toISOString();
-            const formatted = date.slice(0, -5)
-            return formatted.split('T').join(' ');
+            const date = new Date(datetime);
+            return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
         }
 
         const ctx = document.getElementById('myChart');
         let pdata = JSON.parse('<%- JSON.stringify(prices) %>');
+        let sdata = JSON.parse('<%- JSON.stringify(station) %>');
         console.log(pdata);
+        console.log(sdata);
         const diselData = pdata.map(w => ({ x: w.createdAt, y: w.products[0].priceAfterDiscount }));
         const gasData = pdata.map(w => ({ x: w.createdAt, y: w.products[1].priceAfterDiscount }));
         const gas2Data = pdata.map(w => ({ x: w.createdAt, y: w.products[2].priceAfterDiscount }));
@@ -53,31 +57,31 @@
         document.getElementById('posttitle').innerHTML = `${getFormattedDate(pdata[0].createdAt)} - ${getFormattedDate(pdata[pdata.length - 1].createdAt)}`;
         const data = {
             datasets: [{
-                label: pdata[0].products[0].name,
+                label: sdata.productNames.find(w => w.id === pdata[0].products[0].id).name,
                 data: diselData,
                 borderColor: 'rgb(255, 0, 0)',
                 tension: 0.1
             },
             {
-                label: pdata[0].products[1].name,
+                label: sdata.productNames.find(w => w.id === pdata[0].products[1].id).name,
                 data: gasData,
                 borderColor: 'rgb(0, 255, 0)',
                 tension: 0.1
             },
             {
-                label: pdata[0].products[2].name,
+                label: sdata.productNames.find(w => w.id === pdata[0].products[2].id).name,
                 data: gas2Data,
                 borderColor: 'rgb(0, 128, 255)',
                 tension: 0.1
             },
             {
-                label: pdata[0].products[3].name,
+                label: sdata.productNames.find(w => w.id === pdata[0].products[3].id).name,
                 data: SNDData,
                 borderColor: 'rgb(255, 255, 0)',
                 tension: 0.1
             },
             {
-                label: pdata[0].products[4].name,
+                label: sdata.productNames.find(w => w.id === pdata[0].products[4].id).name,
                 data: ZUData,
                 borderColor: 'rgb(255, 0, 255)',
                 tension: 0.1
@@ -88,10 +92,18 @@
             type: 'line',
             data: data,
             options: {
+                responsive: true,
+                hover: {
+                    mode: 'nearest',
+                },
+
                 plugins: {
                     title: {
                         display: true,
                         text: 'Discounted gas prices'
+                    },
+                    legend: {
+                        display: false
                     }
                 },
                 scales: {
@@ -112,7 +124,7 @@
                             display: true,
                             text: "Time (day/hour)"
                         }
-                    }, 
+                    },
                     y: {
                         grid: {
                             color: "#777"

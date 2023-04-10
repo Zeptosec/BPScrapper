@@ -4,9 +4,9 @@ const productsSchema = new mongoose.Schema({
     products: [{
         price: { type: Number, required: true },
         priceAfterDiscount: { type: Number, required: true },
-        name: { type: String, required: true },
+        id: { type: Number, required: true },
     }],
-    location: { type: Number, required: true}
-}, { timestamps: true })
-
-export default mongoose.model('Product', productsSchema);
+    location: { type: Number, required: true },
+    createdAt: { type: Number, required: true }
+})
+export default mongoose.model('Prices', productsSchema);
