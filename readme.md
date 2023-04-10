@@ -14,4 +14,4 @@ Setup env file as shown in **.env.example** file and run:
 ```sh
 npm start
 ```
-Then access one of the api links `/getprices`. For the first time you will get an error, but this will create a collection and a document in your database. Go update that document with correct values in your database and then you can use it normally without errors.
+Then access one of the api links `/api/getprices?pass=yourpass`. For the first time you will get an error, but this will create a collection and a document in your database. Go update that document with correct values in your database and then you can use it normally without errors.

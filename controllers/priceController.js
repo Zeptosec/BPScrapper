@@ -49,7 +49,7 @@ async function checkAndInform(prices) {
         return;
     }
 
-    if(prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount)
+    if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount)
         sendInformationEmail(prev, prices);
     // for (let i = 0; i < prices.products.length; i++) {
     //     if (prev.products[i].priceAfterDiscount > prices.products[i].priceAfterDiscount) {
@@ -59,4 +59,15 @@ async function checkAndInform(prices) {
     //         // did not change or increased
     //     }
     // }
+}
+
+export async function getStatistics(days) {
+    const to = new Date();
+    const from = new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * days);
+    const prices = await pricesModel.find({
+        createdAt: { $gte: from, $lt: to },
+        location: 179
+    }).select('location createdAt products.priceAfterDiscount products.name -_id')
+    const formattedPrices = prices.map(w => ({ products: w.products, location: w.location, createdAt: w.createdAt.getTime() }))
+    return formattedPrices;
 }

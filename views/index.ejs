@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BP statistics</title>
+</head>
+
+<body>
+    <style>
+        body {
+            background-color: #232323;
+        }
+        h2, h3 {
+            color: white;
+        }
+        main {
+            max-width: 1100px;
+            padding: 0 4px;
+            margin: auto;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+    <main>
+        <h2 id="title" class="center"></h2>
+        <h3 id="posttitle" class="center"></h3>
+        <canvas id="myChart"></canvas>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script>
+        function getFormattedDate(datetime) {
+            const date = new Date(datetime).toISOString();
+            const formatted = date.slice(0, -5)
+            return formatted.split('T').join(' ');
+        }
+
+        const ctx = document.getElementById('myChart');
+        let pdata = JSON.parse('<%- JSON.stringify(prices) %>');
+        console.log(pdata);
+        const diselData = pdata.map(w => ({ x: w.createdAt, y: w.products[0].priceAfterDiscount }));
+        const gasData = pdata.map(w => ({ x: w.createdAt, y: w.products[1].priceAfterDiscount }));
+        const gas2Data = pdata.map(w => ({ x: w.createdAt, y: w.products[2].priceAfterDiscount }));
+        const SNDData = pdata.map(w => ({ x: w.createdAt, y: w.products[3].priceAfterDiscount }));
+        const ZUData = pdata.map(w => ({ x: w.createdAt, y: w.products[4].priceAfterDiscount }));
+        document.getElementById('title').innerHTML = `BP ${pdata[0].location} gas station prices`;
+        document.getElementById('posttitle').innerHTML = `${getFormattedDate(pdata[0].createdAt)} - ${getFormattedDate(pdata[pdata.length - 1].createdAt)}`;
+        const data = {
+            datasets: [{
+                label: pdata[0].products[0].name,
+                data: diselData,
+                borderColor: 'rgb(255, 0, 0)',
+                tension: 0.1
+            },
+            {
+                label: pdata[0].products[1].name,
+                data: gasData,
+                borderColor: 'rgb(0, 255, 0)',
+                tension: 0.1
+            },
+            {
+                label: pdata[0].products[2].name,
+                data: gas2Data,
+                borderColor: 'rgb(0, 128, 255)',
+                tension: 0.1
+            },
+            {
+                label: pdata[0].products[3].name,
+                data: SNDData,
+                borderColor: 'rgb(255, 255, 0)',
+                tension: 0.1
+            },
+            {
+                label: pdata[0].products[4].name,
+                data: ZUData,
+                borderColor: 'rgb(255, 0, 255)',
+                tension: 0.1
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Discounted gas prices'
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            parser: 'd HH:mm:ss',
+                            displayFormats: {
+                                hour: 'd/HH'
+                            },
+                            tooltipFormat: 'yyyy-MM-dd HH:mm:ss'
+                        },
+                        grid: {
+                            color: '#777'
+                        },
+                        title: {
+                            display: true,
+                            text: "Time (day/hour)"
+                        }
+                    }, 
+                    y: {
+                        grid: {
+                            color: "#777"
+                        },
+                        title: {
+                            display: true,
+                            text: 'Price (€)'
+                        }
+                    }
+                }
+            }
+        };
+        Chart.defaults.color = "#fff"
+        const chart = new Chart(ctx, config);
+        //let data = [<- prices ]
+    </script>
+</body>
+
+</html>
