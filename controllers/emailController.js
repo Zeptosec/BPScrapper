@@ -13,7 +13,7 @@ function getProductName(prod, station) {
 function getTableRows(prev, curr, station) {
     let rz = "";
     for (let i = 0; i < Math.min(prev.products.length, curr.products.length); i++) {
-        const diff = (prev.products[i].priceAfterDiscount - curr.products[i].priceAfterDiscount) * 100
+        const diff = (new Number(prev.products[i].priceAfterDiscount - curr.products[i].priceAfterDiscount).toPrecision(3)) * 100
         rz += `
         <tr>
             <td style="padding: 5px;border: 1px solid black; border-collapse: collapse;">${getProductName(prev.products[i], station)}</td>
@@ -26,11 +26,11 @@ function getTableRows(prev, curr, station) {
 }
 
 export function getFormattedText(prev, curr) {
-    return `Diesel prices are down ${getPrecent(prev, curr)} % -> ${(prev.products[0].priceAfterDiscount - curr.products[0].priceAfterDiscount) * 100} ct.From ${prev.products[0].priceAfterDiscount} -> ${curr.products[0].priceAfterDiscount} `
+    return `Diesel prices are down ${getPrecent(prev, curr)} % -> ${(new Number(prev.products[0].priceAfterDiscount - curr.products[0].priceAfterDiscount).toPrecision(3)) * 100} ct.From ${prev.products[0].priceAfterDiscount} -> ${curr.products[0].priceAfterDiscount} `
 }
 export function getFormattedHTML(prev, curr, station) {
     return `
-        <p>Diesel prices are down <span style="color:green;">${getPrecent(prev, curr)} %</span> -> <span style="color:green;">${(prev.products[0].priceAfterDiscount - curr.products[0].priceAfterDiscount) * 100}</span> ct</p><p>From ${prev.products[0].priceAfterDiscount} -> ${curr.products[0].priceAfterDiscount}</p>
+        <p>Diesel prices are down <span style="color:green;">${getPrecent(prev, curr)} %</span> -> <span style="color:green;">${(new Number(prev.products[0].priceAfterDiscount - curr.products[0].priceAfterDiscount).toPrecision(3)) * 100}</span> ct</p><p>From ${prev.products[0].priceAfterDiscount} -> ${curr.products[0].priceAfterDiscount}</p>
         <table style="border: 1px solid black; border-collapse: collapse;">
             <thead>
                 <th style="padding: 5px;border: 1px solid black; border-collapse: collapse;">Product</th>

@@ -59,6 +59,7 @@ async function sendInformationEmail(prev, curr, station) {
             from: 'BP <insert4your52mail1here@gmail.com>'
         });
         console.log("Sent mail successfully");
+        return rs.data;
     } catch(err){
         console.log("failed to send")
         console.log(err);
@@ -80,8 +81,11 @@ async function checkAndInform(prices, station) {
         return;
     }
     console.log(`${prev.products[0].priceAfterDiscount} > ${prices.products[0].priceAfterDiscount}`)
-    if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount)
-        await sendInformationEmail(prev, prices, station);
+    if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount){
+        const rs = await sendInformationEmail(prev, prices, station);
+        console.log(rs.rz)
+
+    }
 }
 
 export async function getStatistics(days) {
