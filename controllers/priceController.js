@@ -49,7 +49,7 @@ async function sendInformationEmail(prev, curr, station) {
     const text = getFormattedText(prev, curr, station);
     const html = getFormattedHTML(prev, curr, station);
     const to = process.env.INFORM_EMAIL;
-    console.log(to);
+    console.log(`Sending to: ${to}`);
     const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
         to,
         subject: "Prices are down!",
@@ -57,6 +57,7 @@ async function sendInformationEmail(prev, curr, station) {
         html,
         from: 'BP <insert4your52mail1here@gmail.com>'
     });
+    console.log(rs.data);
 }
 
 async function checkAndInform(prices, station) {
@@ -70,7 +71,7 @@ async function checkAndInform(prices, station) {
         console.log("products lengths dont match!")
         return;
     }
-
+    console.log(`${prev.products[0].priceAfterDiscount} > ${prices.products[0].priceAfterDiscount}`)
     if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount)
         await sendInformationEmail(prev, prices, station);
 }
