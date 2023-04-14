@@ -37,7 +37,6 @@ export async function getPrices() {
             const rs = await axios.get(priceApi, { headers: { 'Authorization': `Bearer ${token}` } });
             const parts = priceApi.split('/')
             await savePrices(rs.data, parts[parts.length - 2]);
-            return rs.data;
         } catch (err) {
             console.log(err);
         }
@@ -77,9 +76,7 @@ async function checkAndInform(prices, station) {
         return;
     }
     if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount){
-        const rs = await sendInformationEmail(prev, prices, station);
-        console.log(rs.rz)
-
+        await sendInformationEmail(prev, prices, station);
     }
 }
 
