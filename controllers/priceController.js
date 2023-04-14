@@ -26,7 +26,7 @@ async function savePrices(prices, location) {
         })
     }
     const curr = await pricesModel.create({ products, location, createdAt: new Date().getTime() });
-    checkAndInform(curr, station);
+    await checkAndInform(curr, station);
 }
 
 export async function getPrices() {
