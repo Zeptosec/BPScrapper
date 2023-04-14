@@ -50,14 +50,12 @@ async function sendInformationEmail(prev, curr, station) {
     const html = getFormattedHTML(prev, curr, station);
     const to = process.env.INFORM_EMAIL;
     console.log(to);
-    axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
+    const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
         to,
         subject: "Prices are down!",
         text,
         html,
         from: 'BP <insert4your52mail1here@gmail.com>'
-    }).then(r => {
-        console.log(r.data)
     });
 }
 
@@ -74,7 +72,7 @@ async function checkAndInform(prices, station) {
     }
 
     if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount)
-        sendInformationEmail(prev, prices, station);
+        await sendInformationEmail(prev, prices, station);
 }
 
 export async function getStatistics(days) {
