@@ -16,19 +16,6 @@ app.get('/', async (req, res) => {
         station
     })
 })
-import axios from 'axios';
-app.get("/mail", async (req, res) => {
-    const to = process.env.INFORM_EMAIL;
-    console.log(`Sending to: ${to}`);
-    const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
-        to,
-        subject: "Prices are down!",
-        text: "DOWN!!",
-        html: "Now!",
-        from: 'BP <insert4your52mail1here@gmail.com>'
-    });
-    res.status(200).send(rs.data);
-});
 
 mongoose.connect(process.env.MONG_URI).then(() => {
     app.listen(port, () => {
