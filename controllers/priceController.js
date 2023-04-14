@@ -50,19 +50,27 @@ async function sendInformationEmail(prev, curr, station) {
     const html = getFormattedHTML(prev, curr, station);
     const to = process.env.INFORM_EMAIL;
     console.log(`Sending to: ${to}`);
-    const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
-        to,
-        subject: "Prices are down!",
-        text,
-        html,
-        from: 'BP <insert4your52mail1here@gmail.com>'
-    });
-    console.log(rs.data);
+    try {
+        const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
+            to,
+            subject: "Prices are down!",
+            text,
+            html,
+            from: 'BP <insert4your52mail1here@gmail.com>'
+        });
+        console.log("Sent mail successfully");
+    } catch(err){
+        console.log("failed to send")
+        console.log(err);
+    }
+
 }
 
 async function checkAndInform(prices, station) {
+    console.log("finding previous price");
     const prev = await pricesModel.findOne({ location: prices.location }).sort({ _id: -1 }).skip(1);
-    if(!prev) {
+    console.log("found one");
+    if (!prev) {
         console.log("prev not found");
         return;
     }
