@@ -37,6 +37,7 @@ export async function getPrices() {
             const rs = await axios.get(priceApi, { headers: { 'Authorization': `Bearer ${token}` } });
             const parts = priceApi.split('/')
             await savePrices(rs.data, parts[parts.length - 2]);
+            return rs.data;
         } catch (err) {
             console.log(err);
         }
