@@ -3,6 +3,7 @@ import { getToken } from '../auth.js';
 import pricesModel from '../models/pricesModel.js';
 import { getFormattedHTML, getFormattedText } from './emailController.js';
 import stationModel from '../models/stationModel.js';
+import { getSubscribers } from './subscriberController.js';
 
 async function savePrices(prices, location) {
     let station = await stationModel.findOne({ location });
@@ -46,9 +47,10 @@ export async function getPrices() {
 }
 
 async function sendInformationEmail(prev, curr, station) {
+    const to = await getSubscribers();
+    if (to.length === 0) return;
     const text = getFormattedText(prev, curr, station);
     const html = getFormattedHTML(prev, curr, station);
-    const to = process.env.INFORM_EMAIL;
     try {
         const rs = await axios.post(`https://api42.teisingas.repl.co/mailpass?pass=${process.env.EMAIL_PASS}`, {
             to,
@@ -58,7 +60,7 @@ async function sendInformationEmail(prev, curr, station) {
             from: 'BP <insert4your52mail1here@gmail.com>'
         });
         return rs.data;
-    } catch(err){
+    } catch (err) {
         console.log("failed to send")
         console.log(err);
     }
@@ -76,7 +78,7 @@ async function checkAndInform(prices, station) {
         console.log("products lengths dont match!")
         return;
     }
-    if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount){
+    if (prev.products[0].priceAfterDiscount > prices.products[0].priceAfterDiscount) {
         await sendInformationEmail(prev, prices, station);
     }
 }

@@ -28,16 +28,186 @@
         .center {
             text-align: center;
         }
+
+        .subscription {
+            display: grid;
+            justify-content: center;
+            margin: 100px auto 0 auto;
+            max-width: 309px;
+
+        }
+
+        .subscription h2 {
+            text-align: center;
+            margin: 0 0 2px 0;
+            color: white;
+        }
+
+        .subscription p {
+            text-align: center;
+            margin: 0 0 10px 0;
+            color: lightslategray;
+        }
+
+        .subscription input {
+            padding: 4px;
+            border-radius: 8px;
+            outline: none;
+            background: #0000;
+            border: 2px solid white;
+            color: white;
+            font-size: larger;
+        }
+
+        .subscription input::placeholder {
+            color: lightgray;
+        }
+
+        .subscription button {
+            width: 90px;
+            padding: 8px;
+            border-radius: 10px;
+            outline: none;
+            margin: 10px 0;
+            color: white;
+            background: #0000;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: 0.3s all ease-out;
+        }
+
+        .subscription h3 {
+            margin: 0;
+            text-align: center;
+        }
+
+        .success {
+            color: rgb(101, 224, 18);
+        }
+
+        .failed {
+            color: rgb(253, 57, 23);
+        }
+
+        .subscription button:hover {
+            color: #232323;
+            background-color: white;
+        }
+
+        .single-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
     </style>
     <main>
         <h2 id="title" class="center"></h2>
         <h3 id="posttitle" class="center"></h3>
         <canvas id="myChart"></canvas>
+        <form onsubmit="subscribe" class="subscription">
+            <h2>Subscribe</h2>
+            <p>to receive notification as soon as the price drops</p>
+            <input type="email" name="mail" id="mail" placeholder="Email address" />
+            <div class="single-row">
+                <button onclick="this.form.submitted=this.value" value="sub">Subscribe</button>
+                <button onclick="this.form.submitted=this.value" value="unsub">Unsubscribe</button>
+            </div>
+            <h3 id="formessage"></h3>
+        </form>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script>
+        let loadingSub = false;
+
+        const element = document.querySelector('form');
+        element.addEventListener('submit', event => {
+            event.preventDefault();
+            if (event.target.submitted === "sub")
+                subscribe();
+            else
+                unsubscribe();
+        });
+
+        async function unsubscribe() {
+            if (loadingSub) return false;
+            loadingSub = true;
+            const email = document.getElementById('mail').value;
+            const msgElement = document.getElementById('formessage');
+            if (email.length === 0) {
+                msgElement.innerHTML = "Provide a valid email";
+                msgElement.classList.remove('success');
+                msgElement.classList.add('failed');
+                return;
+            }
+            try {
+                const rs = await fetch('/unsubscribe', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                })
+                const json = await rs.json();
+                if (rs.ok) {
+                    msgElement.innerHTML = json.msg;
+                    msgElement.classList.add('success');
+                    msgElement.classList.remove('failed');
+                } else {
+                    msgElement.innerHTML = json.msg;
+                    msgElement.classList.remove('success');
+                    msgElement.classList.add('failed');
+                }
+            } catch (rr) {
+                console.log(rr);
+                document.getElementById('formessage').innerHTML = "failed to unsubscribe!"
+                msgElement.classList.remove('success');
+                msgElement.classList.add('failed');
+            } finally {
+                loadingSub = false;
+            }
+        }
+
+        async function subscribe() {
+            if (loadingSub) return false;
+            loadingSub = true;
+            const email = document.getElementById('mail').value;
+            const msgElement = document.getElementById('formessage');
+            if (email.length === 0) {
+                msgElement.innerHTML = "Provide a valid email";
+                msgElement.classList.remove('success');
+                msgElement.classList.add('failed');
+                return;
+            }
+            try {
+                const rs = await fetch('/subscribe', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                })
+                const json = await rs.json();
+                if (rs.ok) {
+                    msgElement.innerHTML = json.msg;
+                    msgElement.classList.add('success');
+                    msgElement.classList.remove('failed');
+                } else {
+                    msgElement.innerHTML = json.msg;
+                    msgElement.classList.remove('success');
+                    msgElement.classList.add('failed');
+                }
+            } catch (rr) {
+                console.log(rr);
+                document.getElementById('formessage').innerHTML = "failed to subscribe!"
+                msgElement.classList.remove('success');
+                msgElement.classList.add('failed');
+            } finally {
+                loadingSub = false;
+            }
+        }
+
         function getFormattedDate(datetime) {
             const date = new Date(datetime);
             return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
@@ -96,7 +266,11 @@
                 hover: {
                     mode: 'nearest',
                 },
-
+                datasets: {
+                    line: {
+                        pointRadius: 0 // disable for all `'line'` datasets
+                    }
+                },
                 plugins: {
                     title: {
                         display: true,
