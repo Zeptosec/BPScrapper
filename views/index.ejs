@@ -216,13 +216,51 @@
         const ctx = document.getElementById('myChart');
         let pdata = JSON.parse('<%- JSON.stringify(prices) %>');
         let sdata = JSON.parse('<%- JSON.stringify(station) %>');
-        console.log(pdata);
-        console.log(sdata);
-        const diselData = pdata.map(w => ({ x: w.createdAt, y: w.products[0].priceAfterDiscount }));
-        const gasData = pdata.map(w => ({ x: w.createdAt, y: w.products[1].priceAfterDiscount }));
-        const gas2Data = pdata.map(w => ({ x: w.createdAt, y: w.products[2].priceAfterDiscount }));
-        const SNDData = pdata.map(w => ({ x: w.createdAt, y: w.products[3].priceAfterDiscount }));
-        const ZUData = pdata.map(w => ({ x: w.createdAt, y: w.products[4].priceAfterDiscount }));
+        let diselData = [];
+        let gasData = [];
+        let gas2Data = [];
+        let SNDData = [];
+        let ZUData = [];
+        // i know it looks terrible but i could not figure out a better way to do it :D
+        for (let i = 0; i < pdata.length; i++) {
+            const w = pdata[i];
+            if (w.products.length > 0) {
+                if (w.products[0])
+                    diselData.push({ x: w.createdAt, y: w.products[0].priceAfterDiscount })
+                else
+                    console.error(`no disel in products ${w.createdAt}`);
+
+                if (w.products[1])
+                    gasData.push({ x: w.createdAt, y: w.products[1].priceAfterDiscount })
+
+                else
+                    console.error(`no gas in products ${w.createdAt}`);
+
+                if (w.products[2])
+                    gas2Data.push({ x: w.createdAt, y: w.products[2].priceAfterDiscount })
+
+                else
+                    console.error(`no gas2 in products ${w.createdAt}`);
+
+                if (w.products[3])
+                    SNDData.push({ x: w.createdAt, y: w.products[3].priceAfterDiscount })
+                else
+                    console.error(`no SND in products ${w.createdAt}`);
+
+                if (w.products[4])
+                    ZUData.push({ x: w.createdAt, y: w.products[4].priceAfterDiscount })
+                else
+                    console.error(`no ZU in products ${w.createdAt}`);
+
+            } else {
+                console.error(`data created at ${w.createdAt} has no products`);
+            }
+        }
+        // const diselData = pdata.map(w => ({ x: w.createdAt, y: w.products[0] ? w.products[0].priceAfterDiscount : '' }));
+        // const gasData = pdata.map(w => ({ x: w.createdAt, y: w.products[1] ? w.products[1].priceAfterDiscount : '' }));
+        // const gas2Data = pdata.map(w => ({ x: w.createdAt, y: w.products[2] ? w.products[2].priceAfterDiscount : '' }));
+        // const SNDData = pdata.map(w => ({ x: w.createdAt, y: w.products[3] ? w.products[3].priceAfterDiscount : '' }));
+        // const ZUData = pdata.map(w => ({ x: w.createdAt, y: w.products[4] ? w.products[4].priceAfterDiscount : '' }));
         document.getElementById('title').innerHTML = `BP ${pdata[0].location} gas station prices`;
         document.getElementById('posttitle').innerHTML = `${getFormattedDate(pdata[0].createdAt)} - ${getFormattedDate(pdata[pdata.length - 1].createdAt)}`;
         const data = {
